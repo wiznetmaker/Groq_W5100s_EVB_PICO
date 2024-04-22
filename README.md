@@ -14,7 +14,7 @@ Utilizing the cutting-edge technology from Groq and Meta, this project aims to r
 
 - MicroPython
 - Groq API
-- Other dependencies listed in `requirements.txt`
+
 
 ## Setup Instructions
 
