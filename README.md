@@ -40,3 +40,46 @@ Utilizing the cutting-edge technology from Groq and Meta, this project aims to r
                raise Exception("Ethernet connection timed out.")
            utime.sleep(1)
        print('Ethernet connected. IP:', nic.ifconfig())
+
+## API Communication Example
+
+- Here is how you can send a chat request to the Groq API and handle responses:
+  ```python
+  def send_chat_request(api_key, user_message):
+      url = "https://api.groq.com/openai/v1/chat/completions"
+      headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+      payload = {"messages": [{"role": "user", "content": user_message}], "model": "llama3-70b-8192"}
+      start_time = utime.ticks_ms()
+      response = urequests.post(url, headers=headers, json=payload)
+      elapsed_time = utime.ticks_diff(utime.ticks_ms(), start_time)
+      if response.status_code == 200:
+          try:
+              content = response.json()['choices'][0]['message']['content']
+              return content, elapsed_time
+          except Exception as e:
+              raise Exception("Failed to decode JSON from response: " + str(e))
+      else:
+          raise Exception(f"API error ({response.status_code}): {response.reason}")
+  
+## Running the Project
+
+- Input your API key in the `main` function and initiate the chat sequence:
+  ```python
+  def main():
+      api_key = 'your_api_key_here'
+      init_ethernet()
+      while True:
+          user_input = input("User: ").strip()
+          if user_input.lower() == "exit":
+              print("Exiting...")
+              break
+          elif not user_input:
+              continue
+          try:
+              response_content, time_taken = send_chat_request(api_key, user_input)
+              print(f"LLaMA Response: {response_content} (Processed in {time_taken} ms)")
+          except Exception as e:
+              print("Error: ", e)
+
+  if __name__ == "__main__":
+      main()
